@@ -9,60 +9,7 @@ Mac / Apple Silicon で **Dify** と **Ollama** を完全ローカルで動か�
 
 ---
 
-## 全体構成（開発環境全体）
-
-```
-                                 ┌────────────────────────────┐
-                                 │            ユーザー         │
-                                 │  ブラウザ / VS Code / curl │
-                                 └─────────────┬──────────────┘
-                                               │
-                           HTTP                 │
-                     (3000/3001/8000)          │
-                                               │
-                ┌──────────────┬───────────────┴───────────────┐
-                │              │                               │
-        (A) Next.js         (B) FastAPI                    (C) Dify Console
-          Web テンプレ        AI テンプレ                  http://localhost:3000
-        :3000/3001             :8000                               │
-           │                    │                                  │
-           └───────────────(開発用/任意連携)──────────────────────┘
-                                │                                  │
-                                └───────(REST)─────────────────────┘
-                                                     Dify API
-                                                              │
-                                                              │  (compose 内ネットワーク)
-                                                              ▼
-     ┌─────────────────────────────────────────────────────────────────────────────────────┐
-     │                         Docker 環境（どちらか片方で稼働）                            │
-     │                                                                                      │
-     │  ┌─────────────────────────────┐                 ┌──────────────────────────────┐     │
-     │  │      Colima (軽量/既定)     │   ← dcolima →   │  Docker Desktop (GUI/補助)  │     │
-     │  │  VM: vz / aarch64           │   ← ddesktop →  │  VM: Apple HVF               │     │
-     │  └───────────┬─────────────────┘                 └───────────┬──────────────────┘     │
-     │              │                                                │                        │
-     │              └─────(DOCKER_HOST の向き先をスクリプトでトグル)──────┬───────────────────┘
-     │                                                                    │
-     │                          ┌──────────────┐  ┌────────────┐  ┌───────────────┐           │
-     │                          │  dify-web    │  │  dify-api  │  │  worker       │           │
-     │                          └───────┬──────┘  └────┬───────┘  └───────┬───────┘           │
-     │                                  │              │                  │                   │
-     │                ┌─────────────────▼──────┐  ┌───▼─────────┐  ┌─────▼──────┐             │
-     │                │   PostgreSQL 15        │  │   Redis 7   │  │  ベクトルDB │             │
-     │                └─────────────────────────┘  └─────────────┘  └────────────┘             │
-     └─────────────────────────────────────────────────────────────────────────────────────┘
-
-  (D) ローカル推論サーバ（Ollama / LM Studio）
-      ┌────────────────────────────────────────────────────────────────┐
-      │  macOS ホストで稼働                                            │
-      │  Dify の「モデルプロバイダ」Base URL → http://host.docker.internal:PORT │
-      └────────────────────────────────────────────────────────────────┘
-```
-
-> この図は開発環境全体の見取り図です（Colima / Docker Desktop の二刀流、Next.js・FastAPI テンプレートを含む）。
-> **本リポジトリが対象とするのは、このうち Dify + Ollama の部分**です。実際に構築する構成は次の通りです。
-
-### 本リポジトリが対象とする構成
+## 構成
 
 ```
 [ブラウザ] -- http://localhost:3000
@@ -78,6 +25,10 @@ Mac / Apple Silicon で **Dify** と **Ollama** を完全ローカルで動か�
   └─ Ollama サーバ: 0.0.0.0:11434
 ```
 
+**ポート公開は `gateway` の `3000:80` のみ**です。`web` は直接公開しません。
+
+> **参考**: [`docs/environment-overview.md`](docs/environment-overview.md) — 開発環境全体の見取り図（Colima / Docker Desktop の二刀流、Next.js・FastAPI テンプレートを含む）。本リポジトリの対象範囲外の構成も含むため、上図とは前提が異なります。
+
 ---
 
 ## ドキュメント
@@ -88,6 +39,7 @@ Mac / Apple Silicon で **Dify** と **Ollama** を完全ローカルで動か�
 | [`docs/operations.md`](docs/operations.md) | **日常運用**。再起動ルーチン、ヘルスチェック、モデル名 |
 | [`docs/troubleshooting.md`](docs/troubleshooting.md) | **トラブル対処**。症状別14件と切り分けの順番 |
 | [`docs/postmortem.md`](docs/postmortem.md) | **ポストモーテム**。なぜ時間がかかったのかの記録 |
+| [`docs/environment-overview.md`](docs/environment-overview.md) | **参考**。開発環境全体の見取り図（対象範囲外を含む） |
 
 ### 目的別の入口
 
@@ -178,7 +130,7 @@ make all
 |---|---|---|
 | `dify-ollama-runbook.md` | 373 | setup / operations / troubleshooting |
 | `dify_ollama_local_runbook_ja.md` | 265 | setup / operations |
-| `architecture.md` | 86 | README（全体構成図） |
+| `architecture.md` | 86 | `docs/environment-overview.md` へ移動 |
 | `dify_cloud_inference_setup.md` | 133 | **未統合**（下記参照） |
 | `bootstrap-diagram-kit.sh` | 191 | そのまま実行可能 |
 
