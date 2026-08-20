@@ -179,8 +179,18 @@ make all
 | `dify-ollama-runbook.md` | 373 | setup / operations / troubleshooting |
 | `dify_ollama_local_runbook_ja.md` | 265 | setup / operations |
 | `architecture.md` | 86 | README（全体構成図） |
-| `dify_cloud_inference_setup.md` | 133 | （未統合） |
+| `dify_cloud_inference_setup.md` | 133 | **未統合**（下記参照） |
 | `bootstrap-diagram-kit.sh` | 191 | そのまま実行可能 |
+
+### `dify_cloud_inference_setup.md` を統合していない理由
+
+**未検証の別トピックであるため**、原本のまま残しています。
+
+本リポジトリの `docs/` は「ローカル完結（Dify + ホスト常駐 Ollama）」の構成を扱い、記載された設定値はすべて [`postmortem.md`](docs/postmortem.md) の動作実績に裏付けられています。
+
+一方このファイルは **ローカル Dify + クラウド推論**という別構成のガイドで、外部の推論エンドポイントに接続する手順が中心です。ローカル構成とは前提が異なり、かつ動作実績の記録がありません。検証済みの内容と混在させると、どこまでが実績に基づく記述か区別できなくなるため、統合を見送りました。
+
+検証が済んだ段階で `docs/cloud-inference.md` として加える余地はあります。
 
 ---
 
