@@ -9,16 +9,15 @@
 
 ## 0. 前提とディレクトリ
 
-- Docker Compose プロジェクトフォルダ：  
-  `$COMPOSE_DIR`
+- Docker Compose プロジェクトフォルダ：本書では `$COMPOSE_DIR` と表記します
 - Docker Desktop 起動済み
 - Mac の **Homebrew** で `ollama` をインストール済み
 
 便利ワンライナー（API コンテナの Compose ルートがわからないとき）:
 ```bash
-PROJDIR=$(docker inspect docker-api-1 --format '{{index .Config.Labels "com.docker.compose.project.working_dir"}}')
-echo "Compose dir: $PROJDIR"
-cd "$PROJDIR"
+COMPOSE_DIR=$(docker inspect docker-api-1 --format '{{index .Config.Labels "com.docker.compose.project.working_dir"}}')
+echo "Compose dir: $COMPOSE_DIR"
+cd "$COMPOSE_DIR"
 ```
 
 ---
@@ -122,7 +121,7 @@ services:
 
 ### 2-3. 起動
 ```bash
-cd $COMPOSE_DIR
+cd "$COMPOSE_DIR"
 
 # コンテナ起動（/ 再作成）
 docker compose up -d --force-recreate web api gateway
@@ -199,7 +198,7 @@ OLLAMA_HOST=0.0.0.0:11434 /opt/homebrew/bin/ollama serve > ~/.ollama-serve.log 2
 sleep 2
 
 # 2) Dify（Docker 側）
-cd $COMPOSE_DIR
+cd "$COMPOSE_DIR"
 docker compose up -d web api gateway
 
 # 3) ヘルス確認
